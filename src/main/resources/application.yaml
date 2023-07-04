@@ -1,0 +1,17 @@
+
+server:
+  port: 8080
+  tomcat:
+    max-swallow-size: 60  
+  
+cloud:
+  aws:
+    region:
+      static: ap-south-1
+      auto: false
+    credentials:
+      access-key: 
+      secret-key: 
+    s3:
+      bucket-name: spring-s3-bkt
+      
