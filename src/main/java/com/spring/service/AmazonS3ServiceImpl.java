@@ -7,9 +7,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.amazonaws.AmazonClientException;
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.amazonaws.services.s3.transfer.TransferManager;
+import com.amazonaws.services.s3.transfer.Upload;
 import com.amazonaws.util.IOUtils;
 
 import java.io.File;
@@ -26,6 +30,23 @@ public class AmazonS3ServiceImpl implements AmazonS3Service {
 	
 	@Autowired
 	private com.amazonaws.services.s3.AmazonS3 amazonS3;
+	
+	@Autowired
+	private TransferManager transferManager;
+	
+	@Override
+	public void uploadFileUsingMutlipart(MultipartFile file) {
+		File convertedFile = convertMultipartFile(file);
+		String key = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+		
+		PutObjectRequest putRequest = new PutObjectRequest(bucketName, key, convertedFile);
+		Upload upload= transferManager.upload(putRequest);
+		try {
+			upload.waitForCompletion();
+		} catch (AmazonClientException |InterruptedException e) {
+			e.printStackTrace();
+		} 
+	}
 	
 	@Override
 	public String uploadFile(MultipartFile file) {

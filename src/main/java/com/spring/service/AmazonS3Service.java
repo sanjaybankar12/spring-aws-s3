@@ -10,4 +10,6 @@ public interface AmazonS3Service {
 
 	byte[] downloadFile(String fileName);
 
+	void uploadFileUsingMutlipart(MultipartFile file);
+
 }
